@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2013
+VisualStudioVersion = 12.0.31101.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SolrFluent", "SolrFluent\SolrFluent.csproj", "{C0156ADA-6464-442C-A579-2C421A6EC022}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SolrFluent.Tests", "SolrFluent.Tests\SolrFluent.Tests.csproj", "{91CCD70B-748F-4792-B19E-D736D382F6F9}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{C0156ADA-6464-442C-A579-2C421A6EC022}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C0156ADA-6464-442C-A579-2C421A6EC022}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C0156ADA-6464-442C-A579-2C421A6EC022}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C0156ADA-6464-442C-A579-2C421A6EC022}.Release|Any CPU.Build.0 = Release|Any CPU
+		{91CCD70B-748F-4792-B19E-D736D382F6F9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{91CCD70B-748F-4792-B19E-D736D382F6F9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{91CCD70B-748F-4792-B19E-D736D382F6F9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{91CCD70B-748F-4792-B19E-D736D382F6F9}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
