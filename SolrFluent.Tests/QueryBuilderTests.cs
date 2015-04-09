@@ -1,10 +1,14 @@
-﻿using System;
+﻿using Flurl;
+using System;
 using Xunit;
 
 namespace SolrFluent.Tests
 {
     public class QueryBuilderTests
     {
+        const string SOLR_URL = "http://localhost:8983/solr";
+        const string CORE_NAME = "new_core";
+
         [Fact]
         public void Ctor_DefaultAddress_Ok()
         {
@@ -32,9 +36,14 @@ namespace SolrFluent.Tests
             qb.Search(expression.Or(Search.Expression("name", "adata")));
 
             qb.ToString();
+        }
 
+        [Fact]
+        public void Query_SimpleWordSearch_Ok()
+        {
+            var qb = new QueryBuilder(SOLR_URL, CORE_NAME).Search("title", "foo");
 
-            
+            Assert.Equal(Url.Combine(SOLR_URL, CORE_NAME, "select?q=title:foo&wt=json&indent=true"), qb.ToString());
         }
     }
 }

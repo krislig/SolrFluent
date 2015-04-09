@@ -13,13 +13,18 @@ namespace SolrFluent
     {
         private string _solrAddress = "http://localhost:8983/solr";
         private string _core = "new_core";
+        private string _wt;
+        private string _indent;
+        private List<IExpression> _searchExpressions;
 
         public QueryBuilder()
         {
-            
+            _wt = "json";
+            _indent = "true";
+            _searchExpressions = new List<IExpression>();
         }
 
-        public QueryBuilder(string solrAddress)
+        public QueryBuilder(string solrAddress) : this()
         {
             _solrAddress = solrAddress;
         }
@@ -31,21 +36,34 @@ namespace SolrFluent
 
         public override string ToString()
         {
-            Uri addressUri = new Uri(_solrAddress);
-            Uri result = new Uri(addressUri, _core);
+            Url result = Url.Combine(_solrAddress, _core);
 
-            return Url.Combine(_solrAddress, _core);
+            if(_searchExpressions.Count > 0)
+            {
+                result = Url.Combine(result, "select?q=");
+
+                foreach (var searchExpr in _searchExpressions)
+                {
+                    
+                }
+            }
+
+            result = Url.Combine(result, "wt:", _wt);
+            result = Url.Combine(result, "indent", _indent);
+
+            return result;
         }
 
 
         public IQuery Search(IExpression expression)
         {
-            throw new NotImplementedException();
+            _searchExpressions.Add(expression);
+            return this;
         }
         
         public IQuery Search(string fieldName, string value)
         {
-            throw new NotImplementedException();
+            return Search(SolrFluent.Search.Expression(fieldName, value));
         }
 
         public IQuery SearchPhrase(string fieldName, string phrase)
