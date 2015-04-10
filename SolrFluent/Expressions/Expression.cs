@@ -6,58 +6,109 @@ using System.Threading.Tasks;
 
 namespace SolrFluent.Expressions
 {
-    public interface IExpression
-    {
-        IExpression And(IExpression expression);
-        IExpression Or(IExpression expression);
-    }
+    //public interface IExpression
+    //{
+    //    IExpression And(IParameter expression);
+    //    IExpression Or(IParameter expression);
+    //}
 
     public enum ExpressionType
     {
-        And,
-        Or
+        Or,
+        And
     }
 
-    public class Expression : IExpression
+    //public class Expression : IExpression
+    //{
+    //    public ExpressionType ExpressionType { get; set; }
+    //    public IParameter Left { get; set; }
+    //    public IParameter Right { get; set; }
+
+    //    public Expression(IParameter paramerter)
+    //    {
+    //        Left = paramerter;
+    //    }
+
+    //    public IExpression And(IParameter parameter)
+    //    {
+    //        ExpressionType = Expressions.ExpressionType.And;
+    //        Right = parameter;
+    //        return this;
+    //    }
+
+    //    public IExpression Or(IParameter parameter)
+    //    {
+    //        ExpressionType = Expressions.ExpressionType.Or;
+    //        Right = parameter;
+    //        return this;
+    //    }
+    //}
+
+    public interface IParameter
+    {
+        IParameter And(IParameter parameter);
+        IParameter Or(IParameter parameter);
+    }
+
+    public abstract class ParameterBase : IParameter
     {
         public ExpressionType ExpressionType { get; set; }
-        public IExpression Left { get; set; }
-        public IExpression Right { get; set; }
+        public IParameter Left { get; set; }
+        public IParameter Right { get; set; }
 
-        protected Expression()
-        {
-
-        }
-
-        public Expression(IExpression expression)
-        {
-            Left = expression;
-        }
-
-        public IExpression And(IExpression expression)
+        public IParameter And(IParameter parameter)
         {
             ExpressionType = Expressions.ExpressionType.And;
-            Right = expression;
+            Right = parameter;
             return this;
         }
 
-        public IExpression Or(IExpression expression)
+        public IParameter Or(IParameter parameter)
         {
             ExpressionType = Expressions.ExpressionType.Or;
-            Right = expression;
+            Right = parameter;
             return this;
         }
     }
 
-    public class SearchExpression : Expression
+    public interface ISimpleParameter : IParameter
     {
-        public string Field { get; set; }
-        public string Value { get; set; }
+        string Field { get; }
+        string Value { get; }
+    }
 
-        public SearchExpression(string fieldName, string value)
+    //public interface IComplexParameter : IParameter
+    //{
+    //    IExpression Expression { get; }
+    //}
+
+    //public class ComplexParameter : ParameterBase, IComplexParameter
+    //{
+    //    public ComplexParameter(IExpression expression)
+    //    {
+    //        Expression = expression;
+    //    }
+
+    //    public IExpression Expression
+    //    {
+    //        get;
+    //        internal set;
+    //    }
+    //}
+
+
+    public class SearchParameter : ParameterBase
+    {
+        public SearchParameter(string fieldName, string value)
         {
             Field = fieldName;
             Value = value;
+
+            Left = this;
         }
+
+        public string Field { get; protected set; }
+
+        public string Value { get; protected set; }
     }
 }

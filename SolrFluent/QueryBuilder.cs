@@ -15,13 +15,13 @@ namespace SolrFluent
         private string _core = "new_core";
         private string _wt;
         private string _indent;
-        private List<IExpression> _searchExpressions;
+        private List<IParameter> _searchParameters;
 
         public QueryBuilder()
         {
             _wt = "json";
             _indent = "true";
-            _searchExpressions = new List<IExpression>();
+            _searchParameters = new List<IParameter>();
         }
 
         public QueryBuilder(string solrAddress) : this()
@@ -38,32 +38,32 @@ namespace SolrFluent
         {
             Url result = Url.Combine(_solrAddress, _core);
 
-            if(_searchExpressions.Count > 0)
+            if(_searchParameters.Count > 0)
             {
                 result = Url.Combine(result, "select?q=");
 
-                foreach (var searchExpr in _searchExpressions)
+                foreach (var searchExpr in _searchParameters)
                 {
                     
                 }
             }
 
-            result = Url.Combine(result, "wt:", _wt);
-            result = Url.Combine(result, "indent", _indent);
+            result.QueryParams.Add("wt", _wt);
+            result.QueryParams.Add("indent", _indent);
 
             return result;
         }
 
 
-        public IQuery Search(IExpression expression)
+        public IQuery Search(IParameter parameter)
         {
-            _searchExpressions.Add(expression);
+            _searchParameters.Add(parameter);
             return this;
         }
         
         public IQuery Search(string fieldName, string value)
         {
-            return Search(SolrFluent.Search.Expression(fieldName, value));
+            return Search(SolrFluent.Search.CreateParameter(fieldName, value));
         }
 
         public IQuery SearchPhrase(string fieldName, string phrase)

@@ -28,12 +28,12 @@ namespace SolrFluent.Tests
             //    .Search(Expression.And(Search.Expression("id", "1234", SearchType.Match), Search.Expression("id", "1234", SearchType.Match)).ToString();
 
             var qb = new QueryBuilder("", "")
-                .Search(Search.Expression("inStock", "true").And(Search.Expression("id", "1234")))
+                .Search(Search.CreateParameter("inStock", "true").And(Search.CreateParameter("id", "1234")))
                 .Search("id", "1234");
-            
-            var expression  = Search.Expression("inStock", "true").And(Search.Expression("id", "1234"));
 
-            qb.Search(expression.Or(Search.Expression("name", "adata")));
+            var expression = Search.CreateParameter("inStock", "true").And(Search.CreateParameter("id", "1234"));
+
+            qb.Search(expression.Or(Search.CreateParameter("name", "adata")));
 
             qb.ToString();
         }
