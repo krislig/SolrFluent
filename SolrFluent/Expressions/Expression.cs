@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SolrFluent.Visitors;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -44,30 +45,37 @@ namespace SolrFluent.Expressions
     //    }
     //}
 
-    public interface IParameter
+    public interface IParameter : IVisitable
     {
-        IParameter And(IParameter parameter);
-        IParameter Or(IParameter parameter);
+        IParameter Left { get; }
+        IParameter Right { get; }
+        ExpressionType ExpressionType { get; }
+
+        
     }
 
-    public abstract class ParameterBase : IParameter
+    public interface ISearchParameter : IParameter
+    {
+        string Field { get; }
+        string Value { get; }
+
+        ISearchParameter And(ISearchParameter parameter);
+        ISearchParameter Or(ISearchParameter parameter);
+    }
+    
+    public class Parameter : IParameter
     {
         public ExpressionType ExpressionType { get; set; }
         public IParameter Left { get; set; }
         public IParameter Right { get; set; }
 
-        public IParameter And(IParameter parameter)
-        {
-            ExpressionType = Expressions.ExpressionType.And;
-            Right = parameter;
-            return this;
-        }
+        
 
-        public IParameter Or(IParameter parameter)
+        
+
+        public void Accept(IVisitor visitor)
         {
-            ExpressionType = Expressions.ExpressionType.Or;
-            Right = parameter;
-            return this;
+            visitor.Visit(this);
         }
     }
 
@@ -97,14 +105,52 @@ namespace SolrFluent.Expressions
     //}
 
 
-    public class SearchParameter : ParameterBase
+    public class SearchParameter : Parameter, ISearchParameter
     {
+        public SearchParameter(ISearchParameter parameter)
+        {
+            ExpressionType = parameter.ExpressionType;
+            Field = parameter.Field;
+            Value = parameter.Value;
+
+            Left = parameter.Left;
+            Right = parameter.Right;
+        }
+
         public SearchParameter(string fieldName, string value)
         {
             Field = fieldName;
             Value = value;
 
-            Left = this;
+            //Left = this;
+        }
+
+        public ISearchParameter And(ISearchParameter parameter)
+        {
+            ExpressionType = Expressions.ExpressionType.And;
+
+            if (Right == null)
+                Right = parameter;
+            else
+            {
+                Left = new SearchParameter(this);
+                Right = parameter;
+            }
+            return this;
+        }
+
+        public ISearchParameter Or(ISearchParameter parameter)
+        {
+            ExpressionType = Expressions.ExpressionType.Or;
+            
+            if (Right == null)
+                Right = parameter;
+            else
+            {
+                Left = new SearchParameter(this);
+                Right = parameter;
+            }
+            return this;
         }
 
         public string Field { get; protected set; }

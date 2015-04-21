@@ -9,9 +9,10 @@ namespace SolrFluent.FluentInterfaces
 {
     public interface IQuery
     {
-        IQuery Search(IParameter expression);
+        IQuery Search(ISearchParameter expression);
         IQuery Search(string fieldName, string phrase);
         IQuery SearchPhrase(string fieldName, string phrase);
+        ISearchParameter SearchParameterTree { get; }
     }
 
     public interface IQueryBuilder

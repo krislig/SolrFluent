@@ -15,13 +15,14 @@ namespace SolrFluent
         private string _core = "new_core";
         private string _wt;
         private string _indent;
-        private List<IParameter> _searchParameters;
+        private ISearchParameter _searchParemeterTree;
+
+        public ISearchParameter SearchParameterTree { get { return _searchParemeterTree; } }
 
         public QueryBuilder()
         {
             _wt = "json";
             _indent = "true";
-            _searchParameters = new List<IParameter>();
         }
 
         public QueryBuilder(string solrAddress) : this()
@@ -38,15 +39,15 @@ namespace SolrFluent
         {
             Url result = Url.Combine(_solrAddress, _core);
 
-            if(_searchParameters.Count > 0)
-            {
-                result = Url.Combine(result, "select?q=");
+            //if(_searchParameters.Count > 0)
+            //{
+            //    result = Url.Combine(result, "select?q=");
 
-                foreach (var searchExpr in _searchParameters)
-                {
+            //    foreach (var searchExpr in _searchParameters)
+            //    {
                     
-                }
-            }
+            //    }
+            //}
 
             result.QueryParams.Add("wt", _wt);
             result.QueryParams.Add("indent", _indent);
@@ -55,15 +56,24 @@ namespace SolrFluent
         }
 
 
-        public IQuery Search(IParameter parameter)
+        public IQuery Search(ISearchParameter parameter)
         {
-            _searchParameters.Add(parameter);
+            if(_searchParemeterTree == null)
+            {
+                _searchParemeterTree = parameter;
+            }
+            else
+            {
+                _searchParemeterTree.Or(parameter);
+            }
+            
+
             return this;
         }
         
         public IQuery Search(string fieldName, string value)
         {
-            return Search(SolrFluent.Search.CreateParameter(fieldName, value));
+            return Search(SolrFluent.Search.CreateSearchParameter(fieldName, value));
         }
 
         public IQuery SearchPhrase(string fieldName, string phrase)

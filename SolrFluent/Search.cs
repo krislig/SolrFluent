@@ -14,7 +14,7 @@ namespace SolrFluent
         //    return new Expression(new SearchParameter(fieldName, value));       
         //}
 
-        public static IParameter CreateParameter(string fieldName, string value)
+        public static ISearchParameter CreateSearchParameter(string fieldName, string value)
         {
             return new SearchParameter(fieldName, value);
         }

@@ -1,5 +1,9 @@
 ﻿using Flurl;
+using SolrFluent.Visitors;
 using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using Xunit;
 
 namespace SolrFluent.Tests
@@ -28,12 +32,19 @@ namespace SolrFluent.Tests
             //    .Search(Expression.And(Search.Expression("id", "1234", SearchType.Match), Search.Expression("id", "1234", SearchType.Match)).ToString();
 
             var qb = new QueryBuilder("", "")
-                .Search(Search.CreateParameter("inStock", "true").And(Search.CreateParameter("id", "1234")))
+                .Search(Search.CreateSearchParameter("inStock", "true").And(Search.CreateSearchParameter("id", "1234")))
                 .Search("id", "1234");
 
-            var expression = Search.CreateParameter("inStock", "true").And(Search.CreateParameter("id", "1234"));
 
-            qb.Search(expression.Or(Search.CreateParameter("name", "adata")));
+            var expression = Search.CreateSearchParameter("inStock", "true").And(Search.CreateSearchParameter("id", "1234"));
+
+            qb.Search(expression.Or(Search.CreateSearchParameter("name", "adata")));
+
+            var countVisitor = new CountVisitor();
+
+
+            countVisitor.CountParameters(qb.SearchParameterTree);
+            
 
             qb.ToString();
         }
