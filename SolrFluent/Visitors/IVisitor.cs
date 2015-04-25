@@ -23,11 +23,9 @@ namespace SolrFluent.Visitors
         public List<string> param = new List<string>();
         public void CountParameters(IVisitable parameter)
         {
-            if (parameter is ISearchParameter)
+            if (parameter is ISearchExpression)
             {
-                var p = parameter as ISearchParameter;
-
-                
+                var p = parameter as ISearchExpression;
 
                 p.Accept(this);
 
@@ -41,10 +39,29 @@ namespace SolrFluent.Visitors
 
         public void Visit(IParameter parameter)
         {
-            var p = parameter as ISearchParameter;
+            var p = parameter as ISearchExpression;
+            string lf = "";
+            string lv = "";
+            string rf = "";
+            string rv = "";
 
-            param.Add(String.Format("Field: {0} Value {1}", p.Field, p.Value));
-            Count++;
+            if (p.Left != null || p.Right != null)
+            {
+                if (p.Left != null)
+                {
+                    lf = p.Left.FieldName;
+                    lv = p.Left.Value;
+                }
+
+                if (p.Right != null)
+                {
+                    rf = p.Right.FieldName;
+                    rv = p.Right.Value;
+                }
+
+                param.Add(String.Format("LEFT Field: {0} Value: {1} {2} RIGHT Field: {3} Value: {4}", lf, lv, p.ExpressionType, rf, rv));
+                Count++;
+            }
         }
     }
 

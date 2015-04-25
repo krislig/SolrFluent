@@ -15,9 +15,9 @@ namespace SolrFluent
         private string _core = "new_core";
         private string _wt;
         private string _indent;
-        private ISearchParameter _searchParemeterTree;
+        private ISearchExpression _searchParemeterTree;
 
-        public ISearchParameter SearchParameterTree { get { return _searchParemeterTree; } }
+        public ISearchExpression SearchParameterTree { get { return _searchParemeterTree; } }
 
         public QueryBuilder()
         {
@@ -56,26 +56,13 @@ namespace SolrFluent
         }
 
 
-        public IQuery Search(ISearchParameter parameter)
+        public IQuery Search(ISearchExpression parameter)
         {
-            if(_searchParemeterTree == null)
-            {
-                _searchParemeterTree = parameter;
-            }
-            else
-            {
-                _searchParemeterTree.Or(parameter);
-            }
-            
+            _searchParemeterTree = parameter;
 
             return this;
         }
         
-        public IQuery Search(string fieldName, string value)
-        {
-            return Search(SolrFluent.Search.CreateSearchParameter(fieldName, value));
-        }
-
         public IQuery SearchPhrase(string fieldName, string phrase)
         {
             throw new NotImplementedException();

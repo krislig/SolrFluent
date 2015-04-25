@@ -47,31 +47,39 @@ namespace SolrFluent.Expressions
 
     public interface IParameter : IVisitable
     {
-        IParameter Left { get; }
-        IParameter Right { get; }
+        IParameter LeftExpression { get; }
+        IParameter RightExpression { get; }
         ExpressionType ExpressionType { get; }
 
         
     }
 
-    public interface ISearchParameter : IParameter
+    public class SearchParameter
     {
-        string Field { get; }
-        string Value { get; }
+        public string FieldName { get; set; }
+        public string Value { get; set; }
+    }
 
-        ISearchParameter And(ISearchParameter parameter);
-        ISearchParameter Or(ISearchParameter parameter);
+    public interface ISearchExpression : IParameter
+    {
+        ISearchExpression Left { get; set; }
+        ISearchExpression Right { get; set; }
+
+        string FieldName { get; set; }
+        string Value { get; set; }
+
+        ISearchExpression And(ISearchExpression parameter);
+        ISearchExpression Or(ISearchExpression parameter);
     }
     
     public class Parameter : IParameter
     {
         public ExpressionType ExpressionType { get; set; }
-        public IParameter Left { get; set; }
-        public IParameter Right { get; set; }
+        public string FieldName { get; set; }
+        public string Value { get; set; }
 
-        
-
-        
+        public IParameter LeftExpression { get; set; }
+        public IParameter RightExpression { get; set; }
 
         public void Accept(IVisitor visitor)
         {
@@ -105,56 +113,49 @@ namespace SolrFluent.Expressions
     //}
 
 
-    public class SearchParameter : Parameter, ISearchParameter
+    public class SearchExpression : Parameter, ISearchExpression
     {
-        public SearchParameter(ISearchParameter parameter)
+        public SearchExpression(string fieldName, string value)
         {
-            ExpressionType = parameter.ExpressionType;
-            Field = parameter.Field;
-            Value = parameter.Value;
-
-            Left = parameter.Left;
-            Right = parameter.Right;
+             FieldName = fieldName; 
+             Value = value;
         }
 
-        public SearchParameter(string fieldName, string value)
+        internal SearchExpression(string fieldName, string value, ISearchExpression left, ISearchExpression right, ExpressionType expressionType) : this (fieldName, value)
         {
-            Field = fieldName;
-            Value = value;
-
-            //Left = this;
+            Left = left;
+            Right = right;
+            ExpressionType = expressionType;
         }
 
-        public ISearchParameter And(ISearchParameter parameter)
+        public ISearchExpression And(ISearchExpression expression)
         {
-            ExpressionType = Expressions.ExpressionType.And;
+            this.Left = new SearchExpression(this.FieldName, this.Value, this.Left, this.Right, this.ExpressionType);
+            this.Right = expression;
+            this.ExpressionType = ExpressionType.And;
 
-            if (Right == null)
-                Right = parameter;
-            else
-            {
-                Left = new SearchParameter(this);
-                Right = parameter;
-            }
             return this;
         }
 
-        public ISearchParameter Or(ISearchParameter parameter)
+        public ISearchExpression Or(ISearchExpression expression)
         {
-            ExpressionType = Expressions.ExpressionType.Or;
-            
-            if (Right == null)
-                Right = parameter;
-            else
-            {
-                Left = new SearchParameter(this);
-                Right = parameter;
-            }
+            this.Left = new SearchExpression(this.FieldName, this.Value, this.Left, this.Right, this.ExpressionType);
+            this.Right = expression;
+            this.ExpressionType = ExpressionType.Or;
+
             return this;
         }
 
-        public string Field { get; protected set; }
+        public ISearchExpression Left
+        {
+            get;
+            set;
+        }
 
-        public string Value { get; protected set; }
+        public ISearchExpression Right
+        {
+            get;
+            set;
+        }
     }
 }
