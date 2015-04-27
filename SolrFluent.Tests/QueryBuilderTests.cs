@@ -22,15 +22,6 @@ namespace SolrFluent.Tests
         [Fact]
         public void Query_Simple_Ok()
         {
-            //var qb = new QueryBuilder("", "").Search.Field("id").Value("1234").ToString();
-
-            //var qb = new QueryBuilder("", "").Search("id", "1234", SearchType.Match).ToString();
-
-            //var qb = new QueryBuilder("", "").Search("id", "1234", SearchType.Match).ToString();
-
-            //var qb = new QueryBuilder("", "")
-            //    .Search(Expression.And(Search.Expression("id", "1234", SearchType.Match), Search.Expression("id", "1234", SearchType.Match)).ToString();
-
             var expression = Search.CreateSearchParameter("inStock", "true").And(Search.CreateSearchParameter("id", "1234"));
 
             expression.Or(Search.CreateSearchParameter("id", "5678")).Or(Search.CreateSearchParameter("name", "adata"));
@@ -41,12 +32,12 @@ namespace SolrFluent.Tests
 
             var countVisitor = new CountVisitor();
 
-
             countVisitor.CountParameters(qb.SearchParameterTree);
-            
 
             qb.ToString();
         }
+
+        
 
         [Fact]
         public void Query_SimpleWordSearch_Ok()

@@ -7,114 +7,39 @@ using System.Threading.Tasks;
 
 namespace SolrFluent.Expressions
 {
-    //public interface IExpression
-    //{
-    //    IExpression And(IParameter expression);
-    //    IExpression Or(IParameter expression);
-    //}
-
     public enum ExpressionType
     {
         Or,
         And
     }
 
-    //public class Expression : IExpression
-    //{
-    //    public ExpressionType ExpressionType { get; set; }
-    //    public IParameter Left { get; set; }
-    //    public IParameter Right { get; set; }
-
-    //    public Expression(IParameter paramerter)
-    //    {
-    //        Left = paramerter;
-    //    }
-
-    //    public IExpression And(IParameter parameter)
-    //    {
-    //        ExpressionType = Expressions.ExpressionType.And;
-    //        Right = parameter;
-    //        return this;
-    //    }
-
-    //    public IExpression Or(IParameter parameter)
-    //    {
-    //        ExpressionType = Expressions.ExpressionType.Or;
-    //        Right = parameter;
-    //        return this;
-    //    }
-    //}
-
-    public interface IParameter : IVisitable
+    public interface IExpression
     {
-        IParameter LeftExpression { get; }
-        IParameter RightExpression { get; }
+
+    }
+
+    public interface ISearchExpression : IExpression, IVisitable 
+    {
+        ISearchExpression Left { get; }
+        ISearchExpression Right { get; }
         ExpressionType ExpressionType { get; }
 
-        
-    }
-
-    public class SearchParameter
-    {
-        public string FieldName { get; set; }
-        public string Value { get; set; }
-    }
-
-    public interface ISearchExpression : IParameter
-    {
-        ISearchExpression Left { get; set; }
-        ISearchExpression Right { get; set; }
-
-        string FieldName { get; set; }
-        string Value { get; set; }
-
-        ISearchExpression And(ISearchExpression parameter);
-        ISearchExpression Or(ISearchExpression parameter);
-    }
-    
-    public class Parameter : IParameter
-    {
-        public ExpressionType ExpressionType { get; set; }
-        public string FieldName { get; set; }
-        public string Value { get; set; }
-
-        public IParameter LeftExpression { get; set; }
-        public IParameter RightExpression { get; set; }
-
-        public void Accept(IVisitor visitor)
-        {
-            visitor.Visit(this);
-        }
-    }
-
-    public interface ISimpleParameter : IParameter
-    {
-        string Field { get; }
+        string FieldName { get; }
         string Value { get; }
+
+        ISearchExpression Or(ISearchExpression expression);
+        ISearchExpression And(ISearchExpression expression);
     }
 
-    //public interface IComplexParameter : IParameter
-    //{
-    //    IExpression Expression { get; }
-    //}
-
-    //public class ComplexParameter : ParameterBase, IComplexParameter
-    //{
-    //    public ComplexParameter(IExpression expression)
-    //    {
-    //        Expression = expression;
-    //    }
-
-    //    public IExpression Expression
-    //    {
-    //        get;
-    //        internal set;
-    //    }
-    //}
-
-
-    public class SearchExpression : Parameter, ISearchExpression
+    public class SearchExpression : ISearchExpression
     {
+        public string FieldName { get; set; }
+        public string Value { get; set; }
+        public ExpressionType ExpressionType { get; set; }
+        public ISearchExpression Left { get; set; }
+        public ISearchExpression Right { get; set; }
+        
+        
         public SearchExpression(string fieldName, string value)
         {
              FieldName = fieldName; 
@@ -133,6 +58,8 @@ namespace SolrFluent.Expressions
             this.Left = new SearchExpression(this.FieldName, this.Value, this.Left, this.Right, this.ExpressionType);
             this.Right = expression;
             this.ExpressionType = ExpressionType.And;
+            this.FieldName = null;
+            this.Value = null;
 
             return this;
         }
@@ -142,20 +69,15 @@ namespace SolrFluent.Expressions
             this.Left = new SearchExpression(this.FieldName, this.Value, this.Left, this.Right, this.ExpressionType);
             this.Right = expression;
             this.ExpressionType = ExpressionType.Or;
+            this.FieldName = null;
+            this.Value = null;
 
             return this;
         }
 
-        public ISearchExpression Left
+        public void Accept(IVisitor visitor)
         {
-            get;
-            set;
-        }
-
-        public ISearchExpression Right
-        {
-            get;
-            set;
+            visitor.Visit(this);
         }
     }
 }

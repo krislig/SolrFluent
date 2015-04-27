@@ -9,7 +9,7 @@ namespace SolrFluent.Visitors
 {
     public interface IVisitor
     {
-        void Visit(IParameter parameter);
+        void Visit(ISearchExpression parameter);
     }
 
     public interface IVisitable
@@ -37,9 +37,9 @@ namespace SolrFluent.Visitors
             }
         }
 
-        public void Visit(IParameter parameter)
+        public void Visit(ISearchExpression expression)
         {
-            var p = parameter as ISearchExpression;
+            var p = expression as ISearchExpression;
             string lf = "";
             string lv = "";
             string rf = "";
